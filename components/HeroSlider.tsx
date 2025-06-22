@@ -34,11 +34,11 @@ const HeroSlider = () => {
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity md:px-48 duration-700 ease-in-out ${
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
             index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
-          {/* Ensure parent is relative and height is defined for `fill` to work */}
+          {/* Background Image */}
           <div className="relative w-full h-full">
             <Image
               src={slide.image}
@@ -49,15 +49,15 @@ const HeroSlider = () => {
             />
           </div>
 
-          {/* Overlay content */}
-          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center px-24">
+          {/* Overlay Content */}
+          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-start px-6 md:px-24">
             <div className="text-white max-w-xl space-y-6">
               <h1
-                className="text-5xl font-bold leading-tight"
+                className="text-3xl md:text-5xl font-bold leading-tight"
                 dangerouslySetInnerHTML={{ __html: slide.headline }}
               />
-              <p className="text-lg">{slide.description}</p>
-              <div className="flex gap-4">
+              <p className="text-base md:text-lg">{slide.description}</p>
+              <div className="flex gap-4 flex-wrap">
                 <button className="bg-blue-600 px-6 py-3 rounded text-white font-semibold hover:bg-blue-700 transition">
                   Login Account
                 </button>
@@ -66,24 +66,24 @@ const HeroSlider = () => {
                 </button>
               </div>
               <p className="text-xs text-gray-300 mt-4">
-                <span className="text-blue-400">*</span>Trading in Forex/ CFDs is highly speculative and carries a high level of risk.
+                <span className="text-blue-400">*</span> Trading in Forex/ CFDs is highly speculative and carries a high level of risk.
               </p>
             </div>
           </div>
         </div>
       ))}
 
-      {/* Arrows */}
+      {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-5 top-1/2 transform -translate-y-1/2 text-white text-3xl z-20"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl z-20"
         aria-label="Previous Slide"
       >
         &#8249;
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-white text-3xl z-20"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl z-20"
         aria-label="Next Slide"
       >
         &#8250;
