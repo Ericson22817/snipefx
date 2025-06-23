@@ -9,6 +9,7 @@ import { RiExchangeDollarLine } from 'react-icons/ri';
 
 import useUser from '@/hooks/useAuth';
 import useWallet from '@/hooks/useWallet';
+import Link from 'next/link';
 
 function formatCurrency(value: number | undefined) {
   return new Intl.NumberFormat('en-US', {
@@ -45,23 +46,26 @@ export default function Dashboard() {
 
         {/* Buttons */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="flex flex-col items-center">
-            <FaMoneyBillWave className="text-2xl text-purple-400" />
-            <span>Deposit</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <FaExchangeAlt className="text-2xl text-purple-400" />
-            <span>Transactions</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <FaChartLine className="text-2xl text-purple-400" />
-            <span>Earning</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <MdOutlineTrendingUp className="text-2xl text-cyan-400" />
-            <span className="text-cyan-400">0%<br />Trading Progress</span>
-          </div>
-        </div>
+  <Link href="/dashboard/deposit" className="flex flex-col items-center hover:opacity-80">
+    <FaMoneyBillWave className="text-2xl text-purple-400" />
+    <span>Deposit</span>
+  </Link>
+
+  <Link href="/dashboard/transactions" className="flex flex-col items-center hover:opacity-80">
+    <FaExchangeAlt className="text-2xl text-purple-400" />
+    <span>Transactions</span>
+  </Link>
+
+  <Link href="/dashboard/withdraw" className="flex flex-col items-center hover:opacity-80">
+    <FaChartLine className="text-2xl text-purple-400" />
+    <span>Withdraw</span>
+  </Link>
+
+  <div className="flex flex-col items-center">
+    <MdOutlineTrendingUp className="text-2xl text-cyan-400" />
+    <span className="text-cyan-400 text-center">0%<br />Trading Progress</span>
+  </div>
+</div>
       </div>
 
       {/* Summary Cards */}
@@ -92,18 +96,18 @@ export default function Dashboard() {
       </div>
 
       {/* BTC Chart */}
-      <div className="mt-6 px-4">
+      <div className="mt-6 px-4 mb-4">
         <div className="bg-[#1f1f1f] p-4 rounded-lg">
           <div className="mb-2 font-medium">BTC/USD</div>
           <iframe
             src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_e98cf&symbol=BITSTAMP%3ABTCUSD&interval=1D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hidevolume=1"
             width="100%"
-            height="300"
+            height="500"
             frameBorder="0"
             allowTransparency={true}
             allowFullScreen={true}
             className="rounded-md"
-          ></iframe>
+          />
         </div>
       </div>
     </div>
