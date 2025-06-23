@@ -133,12 +133,12 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <button
+        {/* <button
           type="submit"
           className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium w-full sm:w-auto"
         >
           Update
-        </button>
+        </button> */}
       </form>
 
       {/* Account Verification Section */}
