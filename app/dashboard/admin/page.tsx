@@ -1,82 +1,96 @@
 'use client';
 
-import React, { useState } from 'react';
-import useWallet from '@/hooks/useWallet';
-import { FaCheckCircle } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
-import usePendingDeposits from '@/hooks/usePendingDeposits';
+import React from 'react';
+import useAdminWalletStats from '@/hooks/useAdminWalletStats';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+} from 'recharts';
 
-const AdminPage = () => {
-  const { approveDeposit } = useWallet();
-  const { pendingDeposits, loading, error, refetch } = usePendingDeposits();
-  const [approving, setApproving] = useState<string | null>(null);
+const AdminDashboard = () => {
+  const { data, loading } = useAdminWalletStats();
 
-  const handleApprove = async (userId: string, reference: string) => {
-    setApproving(reference);
-    try {
-      await approveDeposit({ userId, reference });
-      toast.success('Deposit approved');
-      await refetch();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch {
-      toast.error('Failed to approve deposit');
-    } finally {
-      setApproving(null);
-    }
-  };
+  const chartData = [
+    { name: 'Pending Deposits', value: data?.pendingDeposits.length || 0 },
+    { name: 'Pending Withdrawals', value: data?.pendingWithdrawals.length || 0 },
+    { name: 'Active Deposits', value: data?.activeDeposits.length || 0 },
+    { name: 'Earnings', value: data?.earnings || 0 },
+  ];
+
+  const recentTransactions = data?.allTransactions
+    ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5) || [];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-4">
-      <h1 className="text-2xl font-bold mb-4">Pending Deposits</h1>
+    <div className="p-6 text-white bg-[#0a0a0a] min-h-screen">
+      <h1 className="text-2xl font-bold mb-4">Admin Wallet Analytics</h1>
 
       {loading ? (
-        <p className="text-gray-400">Loading...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : pendingDeposits.length === 0 ? (
-        <p className="text-gray-500">No pending deposits</p>
+        <p>Loading stats...</p>
       ) : (
-        <div className="overflow-auto">
-          <table className="min-w-full bg-[#1f1f1f] border border-gray-700 rounded-lg text-sm">
-            <thead>
-              <tr className="text-left border-b border-gray-600">
-                <th className="p-3">User</th>
-                <th className="p-3">Email</th>
-                <th className="p-3">Amount (USD)</th>
-                <th className="p-3">Reference</th>
-                <th className="p-3">Date</th>
-                <th className="p-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingDeposits.map((tx) => (
-                <tr key={tx.reference} className="border-b border-gray-700 hover:bg-[#2b2b2b]">
-                  <td className="p-3 whitespace-nowrap">{tx.user.firstName} {tx.user.lastName}</td>
-                  <td className="p-3 whitespace-nowrap">{tx.user.email}</td>
-                  <td className="p-3 whitespace-nowrap">${tx.amount.toFixed(2)}</td>
-                  <td className="p-3 whitespace-nowrap">{tx.reference}</td>
-                  <td className="p-3 whitespace-nowrap">{new Date(tx.createdAt).toLocaleString()}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => handleApprove(tx.user._id, tx.reference)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md flex items-center gap-1 disabled:opacity-50"
-                      disabled={approving === tx.reference}
-                    >
-                      {approving === tx.reference ? 'Approving...' : (
-                        <>
-                          <FaCheckCircle /> Approve
-                        </>
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {chartData.map((item, idx) => (
+              <div key={idx} className="bg-[#1f1f1f] p-4 rounded">
+                <h3 className="text-sm text-gray-400">{item.name}</h3>
+                <p className="text-lg font-bold">{item.name === 'Earnings' ? `$${item.value}` : item.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Chart */}
+          <div className="bg-[#1f1f1f] p-6 rounded-lg mb-8">
+            <h2 className="text-lg font-semibold mb-4">Analytics Overview</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#6d28d9" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Recent Transactions */}
+          <div className="bg-[#1f1f1f] p-6 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="bg-[#2b2b2b] text-gray-400">
+                  <tr>
+                    <th className="p-2">User</th>
+                    <th className="p-2">Type</th>
+                    <th className="p-2">Amount</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentTransactions.map((tx, idx) => (
+                    <tr key={idx} className="border-t border-gray-700 hover:bg-[#2a2a2a] transition">
+                      <td className="p-2">{tx.user?.firstName} {tx.user?.lastName}</td>
+                      <td className="p-2 capitalize">{tx.type}</td>
+                      <td className="p-2">${tx.amount}</td>
+                      <td className="p-2">
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          tx.status === 'pending' ? 'bg-yellow-600' :
+                          tx.status === 'successful' ? 'bg-green-600' :
+                          'bg-red-600'
+                        }`}>
+                          {tx.status}
+                        </span>
+                      </td>
+                      <td className="p-2">{new Date(tx.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
 };
 
-export default AdminPage;
+export default AdminDashboard;

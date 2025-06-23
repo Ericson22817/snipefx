@@ -22,6 +22,7 @@ export type User = {
   forgot_password_expiry: string | null;
   role: string;
   isVerified: boolean;
+  isAccountVerified: boolean;
   createdAt: string;
   updatedAt: string;
   __v: number;

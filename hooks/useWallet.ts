@@ -111,6 +111,16 @@ export default function useWallet() {
       toast.error(err.response?.data?.message || 'Approval failed');
     }
   }, []);
+  const approveWithdrawal = useCallback(async ({ userId, reference }: { userId: string; reference: string }) => {
+    try {
+      const res = await apiService.post('/wallet/withdrawal/approve', { userId, reference });
+      toast.success('Deposit approved');
+      return res.data.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Approval failed');
+    }
+  }, []);
 
   useEffect(() => {
     fetchWallet();
@@ -127,5 +137,6 @@ export default function useWallet() {
     exportTransactionsToCSV,
     getWalletDetailsByUserId,
     approveDeposit,
+    approveWithdrawal
   };
 }

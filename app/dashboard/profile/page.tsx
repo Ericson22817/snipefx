@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import useUser from '@/hooks/useAuth';
+import useVerifyAccount from '@/hooks/useVerifyAccount';
 
 export default function ProfilePage() {
   const { user } = useUser();
+  const { verifyAccount, loading: verifying } = useVerifyAccount();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,6 +18,7 @@ export default function ProfilePage() {
   });
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -31,9 +34,7 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -46,33 +47,51 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setDocumentFile(file);
+    }
+  };
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDocumentSubmit = async () => {
+    if (!documentFile) return;
+    const base64 = await convertToBase64(documentFile);
+    await verifyAccount(base64);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Optionally submit other profile changes
     console.log('📝 Submitted:', formData);
-    // You can send the formData here to your backend
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen p-6">
+    <div className="bg-[#0a0a0a] text-white min-h-screen mb-14 px-4 sm:px-8 py-6">
       <h2 className="text-xl font-semibold mb-6">General Information</h2>
 
       <form
         onSubmit={handleSubmit}
         className="bg-[#1f1f1f] p-6 rounded-lg shadow-md max-w-3xl mx-auto"
       >
-        {/* Avatar & File */}
+        {/* Avatar Preview */}
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-gray-600 overflow-hidden">
             {avatarPreview ? (
-              <img
-                src={avatarPreview}
-                alt="Avatar Preview"
-                className="w-full h-full object-cover"
-              />
+              <img src={avatarPreview} alt="Avatar Preview" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl">
-                👤
-              </div>
+              <div className="w-full h-full flex items-center justify-center text-2xl">👤</div>
             )}
           </div>
           <input type="file" accept="image/*" onChange={handleFileChange} />
@@ -80,48 +99,20 @@ export default function ProfilePage() {
 
         {/* Inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">First Name</label>
-            <input
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
-              placeholder="First name"
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Last Name</label>
-            <input
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
-              placeholder="Last name"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1">Email</label>
-            <input
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
-              placeholder="Enter your email"
-              disabled
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Country</label>
-            <input
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
-              placeholder="Enter country"
-            />
-          </div>
+          {['firstName', 'lastName', 'email', 'country', 'salaryRange'].map((field) => (
+            <div key={field}>
+              <label className="block mb-1 capitalize">{field.replace(/([A-Z])/g, ' $1')}</label>
+              <input
+                name={field}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                value={(formData as any)[field]}
+                onChange={handleChange}
+                className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
+                placeholder={`Enter ${field}`}
+                disabled={field === 'email'}
+              />
+            </div>
+          ))}
 
           <div>
             <label className="block mb-1">Gender</label>
@@ -136,27 +127,38 @@ export default function ProfilePage() {
               <option value="female">Female</option>
             </select>
           </div>
-
-          <div>
-            <label className="block mb-1">Salary Range</label>
-            <input
-              name="salaryRange"
-              value={formData.salaryRange}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-[#2b2b2b] text-white rounded-md outline-none"
-              placeholder="Enter salary range"
-            />
-          </div>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
-          className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium"
+          className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium w-full sm:w-auto"
         >
           Update
         </button>
       </form>
+
+      {/* Account Verification Section */}
+      <div className="bg-[#1f1f1f] p-6 mt-8 rounded-lg shadow-md max-w-3xl mx-auto">
+        <h3 className="text-lg font-semibold mb-4">Verify Your Account</h3>
+
+        {user?.isAccountVerified ? (
+          <p className="text-green-500">✅ Your account is verified</p>
+        ) : (
+          <>
+            <p className="mb-4 text-sm text-gray-400">
+              Upload a valid government-issued ID (PDF or image)
+            </p>
+            <input type="file" accept="image/*,application/pdf" onChange={handleDocumentChange} />
+            <button
+              onClick={handleDocumentSubmit}
+              disabled={verifying}
+              className="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-md font-medium w-full sm:w-auto"
+            >
+              {verifying ? 'Verifying...' : 'Submit for Verification'}
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,30 +1,47 @@
-import { FiHome, FiBarChart2, FiUsers, FiDollarSign } from 'react-icons/fi';
+'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  FiHome,
+  FiBarChart2,
+  FiUsers,
+  FiDollarSign,
+} from 'react-icons/fi';
 import Image from 'next/image';
 
 const menu = [
-  { label: 'Dashboard', icon: FiHome },
-  { label: 'Reports', icon: FiBarChart2 },
-  { label: 'Initial Coin Offering', icon: FiDollarSign },
-  { label: 'Currency Exchange', icon: FiBarChart2 },
-  { label: 'Members', icon: FiUsers },
-  { label: 'Tickers', icon: FiBarChart2 },
+  { label: 'Dashboard', icon: FiHome, path: '/dashboard/admin' },
+  { label: 'Pending Deposit', icon: FiBarChart2, path: '/dashboard/admin/pending-deposite' },
+  { label: 'Pending Withdrawal', icon: FiBarChart2, path: '/dashboard/admin/withdrawals' },
+  { label: 'Verified Account', icon: FiDollarSign, path: '/dashboard/admin/verify-account' },
+  { label: 'Users', icon: FiUsers, path: '/dashboard/admin/users' },
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
-    <aside className="bg-gray-900 text-gray-300 w-16 md:w-64 p-2 flex flex-col">
-      <div className="text-white text-xl font-bold px-3 py-4 flex items-center">
+    <aside className="fixed top-0 left-0 h-screen bg-gray-900 text-gray-300 w-16 md:w-64 p-2 flex flex-col z-50">
+      <div className="text-lg font-bold text-center mb-4 hidden md:block">
         <Image src="/images/logo.png" alt="Logo" width={180} height={100} priority />
       </div>
-      <nav className="mt-4 flex-1">
+      <nav className="flex-1 space-y-1">
         {menu.map((item, i) => {
           const Icon = item.icon;
+          const isActive = pathname === item.path;
+
           return (
-            <div key={i} className="flex items-center px-3 py-2 rounded-md hover:bg-gray-800 cursor-pointer">
+            <Link
+              key={i}
+              href={item.path}
+              className={`flex items-center px-3 py-2 rounded-md hover:bg-gray-800 transition ${
+                isActive ? 'bg-gray-800 text-white font-semibold' : ''
+              }`}
+            >
               <Icon size={20} />
               <span className="ml-3 hidden md:inline">{item.label}</span>
-            </div>
+            </Link>
           );
         })}
       </nav>
