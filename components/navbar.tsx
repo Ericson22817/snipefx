@@ -5,10 +5,90 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { AiOutlineStock } from 'react-icons/ai';
+import { RiExchangeDollarLine } from 'react-icons/ri';
+import { SiEthereum, SiBitcoin } from 'react-icons/si';
+import { GiGoldBar, GiOilDrum } from 'react-icons/gi';
+import { BsFillBarChartFill } from 'react-icons/bs';
+import { SiApple, SiTesla } from 'react-icons/si';
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const items = [
+      {
+        label: 'Nasdaq 100',
+        value: '-0.07%',
+        color: 'red',
+        icon: <AiOutlineStock />,
+      },
+      {
+        label: 'EUR/USD',
+        value: '+0.11%',
+        color: 'green',
+        icon: <RiExchangeDollarLine />,
+      },
+      {
+        label: 'BTC/USD',
+        value: '-0.02%',
+        color: 'red',
+        icon: <SiBitcoin />,
+      },
+      {
+        label: 'ETH/USD',
+        value: '-0.60%',
+        color: 'red',
+        icon: <SiEthereum />,
+      },
+      {
+        label: 'S&P 500',
+        value: '+0.09%',
+        color: 'green',
+        icon: <BsFillBarChartFill />,
+      },
+      {
+        label: 'BTC/ETH',
+        value: '-0.15%',
+        color: 'red',
+        icon: <SiBitcoin />,
+      },
+      {
+        label: 'Gold',
+        value: '+0.23%',
+        color: 'green',
+        icon: <GiGoldBar />,
+      },
+      {
+        label: 'Crude Oil',
+        value: '-1.02%',
+        color: 'red',
+        icon: <GiOilDrum />,
+      },
+      {
+        label: 'US 10Y Yield',
+        value: '+0.07%',
+        color: 'green',
+        icon: <BsFillBarChartFill />,
+      },
+      {
+        label: 'GBP/USD',
+        value: '-0.30%',
+        color: 'red',
+        icon: <RiExchangeDollarLine />,
+      },
+      {
+        label: 'AAPL',
+        value: '+1.15%',
+        color: 'green',
+        icon: <SiApple />,
+      },
+      {
+        label: 'TSLA',
+        value: '-2.40%',
+        color: 'red',
+        icon: <SiTesla />,
+      },
+    ];
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -19,6 +99,20 @@ const Navbar = () => {
 
   return (
     <header className="bg-black text-white px-6 lg:px-24">
+      {/* Ticker */}
+            <div className="mt-6 px-4 overflow-hidden">
+                <div className="whitespace-nowrap animate-scroll flex gap-8 text-sm text-gray-300">
+                    {[...items, ...items].map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2 min-w-max">
+                            {item.icon}
+                            {item.label}:{' '}
+                            <span className={item.color === 'red' ? 'text-red-500' : 'text-green-400'}>
+                                {item.value}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </div>
       <div className="flex justify-between items-center py-6 border-b border-white">
         <Image src="/images/logo.png" alt="Logo" width={180} height={100} priority />
 
