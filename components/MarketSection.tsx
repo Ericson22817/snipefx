@@ -1,7 +1,6 @@
-"use client";
+'use client';
 
-import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import React from "react";
 
 const categories = [
   { name: "Forex", icon: "€" },
@@ -12,29 +11,12 @@ const categories = [
   { name: "Commodities", icon: "📦" },
 ];
 
-const fadeUpVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
-  },
-};
-
 const MarketSection = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section className="bg-black text-white" ref={ref}>
+    <section className="bg-black text-white">
       {/* Top Blue Strip */}
-      <motion.div
-        variants={fadeUpVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="bg-gradient-to-r px-4 from-blue-800 to-blue-900 py-8 md:px-48 flex flex-col md:flex-row md:items-center md:justify-between"
-      >
-        <div className="mb-4  md:mb-0 text-center md:text-left">
+      <div className="bg-gradient-to-r px-4 from-blue-800 to-blue-900 py-8 md:px-48 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="mb-4 md:mb-0 text-center md:text-left">
           <h2 className="text-white md:text-4xl text-2xl font-semibold">
             Less
             <br />
@@ -55,15 +37,10 @@ const MarketSection = () => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Market Analysis Section */}
-      <motion.div
-        variants={fadeUpVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="px-4 md:px-24 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
-      >
+      <div className="px-4 md:px-24 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="space-y-6 text-center md:text-left">
           <h2 className="text-4xl font-bold">
             Market analysis and
@@ -87,7 +64,7 @@ const MarketSection = () => {
             className="w-full h-full"
           />
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
