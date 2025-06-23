@@ -28,7 +28,11 @@ interface AdminWalletStats {
   earnings: number;
   allTransactions: Transaction[];
 }
-
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
+}
 export default function useAdminWalletStats() {
   const [data, setData] = useState<AdminWalletStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,8 +41,9 @@ export default function useAdminWalletStats() {
   const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await apiService.get('/wallet/stats');
+      const res = await apiService.get<ApiResponse<AdminWalletStats>>('/wallet/stats');
       setData(res.data.data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message = err.response?.data?.message || 'Failed to fetch admin stats';
       setError(message);

@@ -21,7 +21,11 @@ interface PendingDeposit {
   user: User;
 }
 
-
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
+}
 
 export default function usePendingWithdrawal() {
   const [pendingDeposits, setPendingDeposits] = useState<PendingDeposit[]>([]);
@@ -31,7 +35,7 @@ export default function usePendingWithdrawal() {
   const fetchPendingDeposits = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await apiService.get('/wallet/withdrawals/pending');
+      const res = await apiService.get<ApiResponse<PendingDeposit[]>>('/wallet/withdrawals/pending');
       setPendingDeposits(res.data.data);
       setError(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

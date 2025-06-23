@@ -16,6 +16,7 @@ const menu = [
   { label: 'Pending Withdrawal', icon: FiBarChart2, path: '/dashboard/admin/withdrawals' },
   { label: 'Verified Account', icon: FiDollarSign, path: '/dashboard/admin/verify-account' },
   { label: 'Users', icon: FiUsers, path: '/dashboard/admin/users' },
+  { label: 'Wallet Address', icon: FiUsers, path: '/dashboard/admin/wallet-address' },
 ];
 
 export default function Sidebar() {

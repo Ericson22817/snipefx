@@ -78,13 +78,17 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen mb-14 px-4 sm:px-8 py-6">
-      <h2 className="text-xl font-semibold mb-6">General Information</h2>
+  <div className="bg-[#0a0a0a] text-white min-h-screen mb-14 px-4 sm:px-8 py-6">
+    <h2 className="text-xl font-semibold mb-6">Profile</h2>
 
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+      {/* General Information Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-[#1f1f1f] p-6 rounded-lg shadow-md max-w-3xl mx-auto"
+        className="bg-[#1f1f1f] p-6 rounded-lg shadow-md w-full"
       >
+        <h3 className="text-lg font-semibold mb-4">General Information</h3>
+
         {/* Avatar Preview */}
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-gray-600 overflow-hidden">
@@ -138,7 +142,7 @@ export default function ProfilePage() {
       </form>
 
       {/* Account Verification Section */}
-      <div className="bg-[#1f1f1f] p-6 mt-8 rounded-lg shadow-md max-w-3xl mx-auto">
+      <div className="bg-[#1f1f1f] p-6 rounded-lg shadow-md w-full">
         <h3 className="text-lg font-semibold mb-4">Verify Your Account</h3>
 
         {user?.isAccountVerified ? (
@@ -160,5 +164,7 @@ export default function ProfilePage() {
         )}
       </div>
     </div>
-  );
+  </div>
+);
+
 }

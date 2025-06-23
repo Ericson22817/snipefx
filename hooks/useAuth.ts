@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // hooks/useAuth.ts
 'use client';
 
@@ -28,20 +29,25 @@ export type User = {
   __v: number;
 };
 
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
+}
+
 export function useRegister() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const register = async (formData: any) => {
+  const register = async (formData: Record<string, any>) => {
     setLoading(true);
     try {
-      const res = await apiService.post('/user/register', formData);
-      showToast(res?.data.message, 'success');
+      const res = await apiService.post<ApiResponse<User>>('/user/register', formData);
+      const msg = res.data.message ?? 'Registration successful';
+      showToast(msg, 'success');
       router.push('/login');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const msg = error?.response?.data?.message || 'Registration failed';
+      const msg = error?.response?.data?.message ?? 'Registration failed';
       showToast(msg, 'error');
     } finally {
       setLoading(false);
@@ -55,13 +61,15 @@ export function useLogin() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const login = async (formData: any) => {
+  const login = async (formData: Record<string, any>) => {
     setLoading(true);
     try {
-      const res = await apiService.post('/user/login', formData);
-      const { accesstoken, user } = res?.data?.data;
+      const res = await apiService.post<ApiResponse<{ accesstoken: string; user: User }>>(
+        '/user/login',
+        formData
+      );
 
+      const { accesstoken, user } = res.data.data;
       localStorage.setItem('token', accesstoken);
       localStorage.setItem('email', user.email);
 
@@ -69,7 +77,7 @@ export function useLogin() {
       router.push('/dashboard');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const msg = error?.response?.data?.message || 'Login failed';
+      const msg = error?.response?.data?.message ?? 'Login failed';
       showToast(msg, 'error');
     } finally {
       setLoading(false);
@@ -87,8 +95,8 @@ export default function useUser() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await apiService.get('/user/user-details');
-        setUser(res.data.data as User);
+        const res = await apiService.get<ApiResponse<User>>('/user/user-details');
+        setUser(res.data.data);
       } catch (error: any) {
         console.error('❌ Failed to fetch user details:', error.response?.data || error.message);
         setUser(null);

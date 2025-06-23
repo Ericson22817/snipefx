@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -21,6 +22,12 @@ interface PendingDeposit {
   user: User;
 }
 
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
+}
+
 export default function usePendingDeposits() {
   const [pendingDeposits, setPendingDeposits] = useState<PendingDeposit[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,12 +36,16 @@ export default function usePendingDeposits() {
   const fetchPendingDeposits = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await apiService.get('/wallet/deposits/pending');
-      setPendingDeposits(res.data.data);
-      setError(null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to fetch pending deposits';
+      const res = await apiService.get<ApiResponse<PendingDeposit[]>>('/wallet/deposits/pending');
+      if (res.data?.data) {
+        setPendingDeposits(res.data.data);
+        setError(null);
+      } else {
+        throw new Error(res.data?.message || 'Unexpected response structure');
+      }
+    } catch (err) {
+      const message =
+        (err as any)?.response?.data?.message || (err as Error).message || 'Failed to fetch pending deposits';
       setError(message);
       toast.error(message);
     } finally {
@@ -46,6 +57,10 @@ export default function usePendingDeposits() {
     fetchPendingDeposits();
   }, [fetchPendingDeposits]);
 
-  return { pendingDeposits, loading, error, refetch: fetchPendingDeposits };
+  return {
+    pendingDeposits,
+    loading,
+    error,
+    refetch: fetchPendingDeposits,
+  };
 }
-

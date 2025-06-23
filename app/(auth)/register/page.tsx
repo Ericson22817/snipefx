@@ -181,8 +181,8 @@ export default function RegisterForm() {
                     {country}
                   </SelectItem>
                 ) : (
-                  <SelectItem key={country.name} value={country.name}>
-                    {country.name}
+                  <SelectItem key={country} value={country}>
+                    {country}
                   </SelectItem>
                 )
               )}
