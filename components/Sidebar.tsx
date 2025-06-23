@@ -10,6 +10,10 @@ import {
 } from 'react-icons/fi';
 import Image from 'next/image';
 
+interface SidebarProps {
+  onItemClick?: () => void; // ← Optional prop
+}
+
 const menu = [
   { label: 'Dashboard', icon: FiHome, path: '/dashboard/admin' },
   { label: 'Pending Deposit', icon: FiBarChart2, path: '/dashboard/admin/pending-deposite' },
@@ -19,7 +23,7 @@ const menu = [
   { label: 'Wallet Address', icon: FiUsers, path: '/dashboard/admin/wallet-address' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onItemClick }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -36,6 +40,7 @@ export default function Sidebar() {
             <Link
               key={i}
               href={item.path}
+              onClick={onItemClick} // ← Call when clicked
               className={`flex items-center px-3 py-2 rounded-md hover:bg-gray-800 transition ${
                 isActive ? 'bg-gray-800 text-white font-semibold' : ''
               }`}

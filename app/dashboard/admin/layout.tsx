@@ -32,7 +32,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Sidebar */}
       <div className={`md:block ${isMobileSidebarOpen ? 'block' : 'hidden'} w-full md:w-64 bg-[#1f1f1f] md:min-h-screen`}>
-        <Sidebar />
+        <Sidebar onItemClick={() => setMobileSidebarOpen(false)} />
       </div>
 
       {/* Content */}
