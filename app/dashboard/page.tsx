@@ -104,7 +104,6 @@ export default function Dashboard() {
             width="100%"
             height="500"
             frameBorder="0"
-            allowTransparency={true}
             allowFullScreen={true}
             className="rounded-md"
           />
