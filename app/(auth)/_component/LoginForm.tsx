@@ -24,7 +24,7 @@ export default function LoginForm() {
         <div>
           <h2 className="text-lg font-semibold text-indigo-700">Welcome Back!</h2>
           <p className="text-sm text-indigo-600">
-            Login to continue trading with Citrust Fx Options.
+            Login to continue trading with Snipe Fx pro.
           </p>
         </div>
         <img src="/images/welcome-illustration.png" alt="Welcome" className="h-24" />

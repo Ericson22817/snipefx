@@ -58,7 +58,7 @@ const TransactionMarquee: React.FC<Props> = ({ title, data }) => {
           <tbody>
             {[...data, ...data].map((tx, index) => (
               <tr key={index} className=" border-gray-700">
-                <td className="py-2 px-4">{tx.gateway}</td>
+                <td className="py-2 px-4">Bitcoin</td>
                 <td className="py-2 px-4">{tx.name}</td>
                 <td className="py-2 px-4">{tx.amount}</td>
                 <td className="py-2 px-4">{tx.time}</td>

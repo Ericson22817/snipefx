@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import apiService from '@/lib/apiService';
 import { showToast } from '@/lib/toast';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 export type VerifiedUser = {
   _id: string;
@@ -26,7 +26,9 @@ export default function useVerifiedUsers() {
   useEffect(() => {
     const fetchVerifiedUsers = async () => {
       try {
-        const res: AxiosResponse<ApiResponse<VerifiedUser[]>> = await apiService.get('/user/verified-users-with-docs');
+        const res = await apiService.get<ApiResponse<VerifiedUser[]>>(
+          '/user/verified-users-with-docs'
+        );
         if (res.data?.data) {
           setUsers(res.data.data);
         } else {
@@ -45,34 +47,9 @@ export default function useVerifiedUsers() {
     fetchVerifiedUsers();
   }, []);
 
-  const downloadDocument = async (userId: string) => {
-    try {
-      const res = await apiService.get<Blob>(`/user/view-document/${userId}`, {
-        responseType: 'blob',
-      });
-
-      const blob = new Blob([res.data], { type: 'application/pdf' });
-
-      // Extract filename from Content-Disposition
-      const disposition = res.headers['content-disposition'];
-      const fileNameMatch = disposition?.match(/filename="?(.+)"?/);
-      const fileName = fileNameMatch?.[1] || 'document.pdf';
-
-      // Trigger download
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url); // Clean up
-    } catch (error) {
-      const msg = axios.isAxiosError(error)
-        ? error.response?.data?.message
-        : 'Failed to download document';
-      showToast(msg, 'error');
-    }
+  const downloadDocument = (userId: string) => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/view-document/${userId}`;
+    window.open(url, '_blank');
   };
 
   return { users, loading, downloadDocument };

@@ -45,7 +45,7 @@ export default function RegisterForm() {
         <div>
           <h2 className="text-lg font-semibold text-indigo-700">Welcome!</h2>
           <p className="text-sm text-indigo-600">
-            Signup to continue trade with Citrust Fx Options.
+            Signup to continue trade with Snipe Fx pro.
           </p>
         </div>
         <img src="/images/welcome-illustration.png" alt="Welcome" className="h-24" />

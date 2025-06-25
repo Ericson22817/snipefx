@@ -50,10 +50,10 @@ const MarketAnalysis = () => {
         <div className="border border-blue-600 rounded-lg p-6 space-y-4 bg-[#0d0d0d]">
           <div className="flex items-center gap-4">
             <Image
-              src="/kimberly.jpg" // Replace with actual path or use next/image from public folder
+              src="/images/user1.jpeg" // Replace with actual path or use next/image from public folder
               alt="Kimberly Adams"
-              width={50}
-              height={50}
+              width={100}
+              height={100}
               className="rounded-full object-cover"
             />
           </div>
@@ -68,10 +68,10 @@ const MarketAnalysis = () => {
         <div className="border border-blue-600 rounded-lg p-6 space-y-4 bg-[#0d0d0d]">
           <div className="flex items-center gap-4">
             <Image
-              src="/mandeep.jpg" // Replace with actual path or use next/image from public folder
+              src="/images/user2.jpeg" // Replace with actual path or use next/image from public folder
               alt="Mandeep Singh"
-              width={50}
-              height={50}
+              width={100}
+              height={100}
               className="rounded-full object-cover"
             />
           </div>
@@ -87,10 +87,10 @@ const MarketAnalysis = () => {
         <div className="border border-blue-600 rounded-lg p-6 space-y-4 bg-[#0d0d0d]">
           <div className="flex items-center gap-4">
             <Image
-              src="/kimberly.jpg" // Replace with actual path or use next/image from public folder
+              src="/images/user3.jpeg" // Replace with actual path or use next/image from public folder
               alt="Kimberly Adams"
-              width={50}
-              height={50}
+              width={100}
+              height={100}
               className="rounded-full object-cover"
             />
           </div>
@@ -105,10 +105,10 @@ const MarketAnalysis = () => {
         <div className="border border-blue-600 rounded-lg p-6 space-y-4 bg-[#0d0d0d]">
           <div className="flex items-center gap-4">
             <Image
-              src="/mandeep.jpg" // Replace with actual path or use next/image from public folder
+              src="/images/user4.png" // Replace with actual path or use next/image from public folder
               alt="Mandeep Singh"
-              width={50}
-              height={50}
+              width={100}
+              height={100}
               className="rounded-full object-cover"
             />
           </div>

@@ -33,7 +33,7 @@ const Header = () => {
 
         {/* Verification Notice */}
         {user && user.isAccountVerified === false && (
-          <div className="bg-white text-red-800 font-semibold px-4 py-2 rounded text-center text-sm sm:text-base max-w-md w-full">
+          <div className="bg-white text-red-800 font-semibold px-4 py-2 rounded text-center text-sm sm:text-base md:max-w-md w-full">
             Your account is <strong>not verified</strong>.{' '}
             <Link href="/dashboard/profile" className="text-blue-700 underline">
               Complete verification
