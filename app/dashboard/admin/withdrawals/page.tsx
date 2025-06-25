@@ -27,14 +27,14 @@ const AdminPage = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-4">
-      <h1 className="text-2xl font-bold mb-4">Pending Deposits</h1>
+      <h1 className="text-2xl font-bold mb-4">Pending Withdrawal</h1>
 
       {loading ? (
         <p className="text-gray-400">Loading...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : pendingDeposits.length === 0 ? (
-        <p className="text-gray-500">No pending deposits</p>
+        <p className="text-gray-500">No pending Withdrawal</p>
       ) : (
         <div className="overflow-auto">
           <table className="min-w-full bg-[#1f1f1f] border border-gray-700 rounded-lg text-sm">
