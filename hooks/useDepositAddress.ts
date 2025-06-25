@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// hooks/useDepositAddress.ts
 'use client';
 
 import { useEffect, useState } from 'react';
 import apiService from '@/lib/apiService';
 import { showToast } from '@/lib/toast';
 
-interface DepositAddressResponse {
-  depositAddress: string;
+interface DepositAddress {
+  _id: string;
+  currency: string;
+  address: string;
 }
 
 interface ApiResponse<T> {
@@ -16,31 +19,29 @@ interface ApiResponse<T> {
 }
 
 export default function usePlatformDepositAddress() {
-  const [address, setAddress] = useState<string | null>(null);
+  const [addresses, setAddresses] = useState<DepositAddress[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch platform deposit address
-  const fetchAddress = async () => {
+  const fetchAddresses = async () => {
     setLoading(true);
     try {
-      const res = await apiService.get<ApiResponse<string>>('/wallet/deposit-address');
-      setAddress(res.data.data); // This should be the plain string
+      const res = await apiService.get<ApiResponse<DepositAddress[]>>('/wallet/deposit-address');
+      setAddresses(res.data.data);
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Failed to fetch deposit address', 'error');
+      showToast(error?.response?.data?.message || 'Failed to fetch deposit addresses', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Save or update platform deposit address (admin only)
-  const saveAddress = async (depositAddress: string) => {
+  const saveAddress = async (currency: string, address: string, id?: string) => {
     setLoading(true);
     try {
-      const res = await apiService.post<ApiResponse<DepositAddressResponse>>('/wallet/deposit-address', {
-        depositAddress,
-      });
+      const url = id ? `/wallet/deposit-address/${id}` : '/wallet/deposit-address';
+      const method = id ? apiService.put : apiService.post;
+      const res = await method<ApiResponse<DepositAddress[]>>(url, { currency, address });
       showToast(res.data.message ?? 'Deposit address saved', 'success');
-      setAddress(res.data.data.depositAddress);
+      setAddresses(res.data.data);
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Failed to save address', 'error');
     } finally {
@@ -49,13 +50,13 @@ export default function usePlatformDepositAddress() {
   };
 
   useEffect(() => {
-    fetchAddress();
+    fetchAddresses();
   }, []);
 
   return {
-    address,
+    addresses,
     loading,
-    fetchAddress,
+    fetchAddresses,
     saveAddress,
   };
 }
