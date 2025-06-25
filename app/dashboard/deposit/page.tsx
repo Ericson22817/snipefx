@@ -51,7 +51,7 @@ export default function DepositPage() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen flex items-center justify-center p-4">
+    <div className="bg-[#0a0a0a] text-white mt-24 flex items-center justify-center p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-[#1f1f1f] w-full max-w-md rounded-xl p-6 shadow-lg border border-purple-600"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -69,14 +70,15 @@ export default function useWallet() {
   }, []);
 
   const withdraw = useCallback(async (amount: number) => {
-    try {
-      const res = await apiService.post<ApiResponse<unknown>>('/wallet/withdraw', { amount });
-      toast.success('Withdrawal successful');
-      return res.data.data;
-    } catch (err) {
-      handleError(err, 'Withdrawal failed');
-    }
-  }, []);
+  try {
+    const res = await apiService.post<ApiResponse<unknown>>('/wallet/withdraw', { amount });
+    toast.success('Withdrawal successful');
+    return res.data.data;
+  } catch (err: any) {
+    const msg = err?.response?.data?.message || 'Withdrawal failed';
+    toast.error(msg);
+  }
+}, []);
 
   const getTransactionHistory = useCallback(async (
     id: string,

@@ -33,7 +33,7 @@ export default function WithdrawPage() {
 
   return (
     <>
-      <div className="p-6 min-h-screen bg-[#0a0a0a] text-white flex justify-center items-center">
+      <div className="p-6 min-h-screen bg-[#0a0a0a] mt-24 flex justify-center items-center">
         <form
           onSubmit={handleWithdraw}
           className="w-full max-w-md bg-[#1f1f1f] p-6 rounded-lg shadow-lg border border-purple-700"
