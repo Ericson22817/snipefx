@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -14,12 +15,16 @@ const HeroSection = () => {
           Access global financial markets from one secure platform
         </p>
         <div className="flex gap-4 flex-wrap">
-          <button className="bg-blue-600 px-6 py-3 rounded text-white font-semibold hover:bg-blue-700 transition">
-            Login Account
-          </button>
-          <button className="bg-white text-blue-600 px-6 py-3 rounded font-semibold hover:bg-gray-200 transition">
-            Register Account
-          </button>
+          <Link href="/login">
+            <button className="bg-blue-600 px-6 py-3 rounded text-white font-semibold hover:bg-blue-700 transition">
+              Login Account
+            </button>
+          </Link>
+          <Link href="/register">
+            <button className="bg-white text-blue-600 px-6 py-3 rounded font-semibold hover:bg-gray-200 transition">
+              Register Account
+            </button>
+          </Link>
         </div>
         <p className="text-xs text-gray-300 mt-4">
           <span className="text-blue-400">*</span> Trading in Forex/ CFDs is highly speculative and carries a high level of risk.
