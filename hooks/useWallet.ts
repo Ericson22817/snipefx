@@ -132,6 +132,19 @@ export default function useWallet() {
     }
   }, []);
 
+  const declineDeposit = useCallback(async ({ userId, reference }: { userId: string; reference: string }) => {
+  try {
+    const res = await apiService.post<ApiResponse<unknown>>('/wallet/decline', {
+      userId,
+      reference,
+    });
+    toast.success('Deposit declined');
+    return res.data.data;
+  } catch (err) {
+    handleError(err, 'Decline failed');
+  }
+}, []);
+
   const approveWithdrawal = useCallback(async ({ userId, reference }: { userId: string; reference: string }) => {
     try {
       const res = await apiService.post<ApiResponse<unknown>>('/wallet/withdrawal/approve', {
@@ -144,6 +157,19 @@ export default function useWallet() {
       handleError(err, 'Approval failed');
     }
   }, []);
+
+  const declineWithdrawal = useCallback(async ({ userId, reference }: { userId: string; reference: string }) => {
+  try {
+    const res = await apiService.post<ApiResponse<unknown>>('/wallet/withdrawal/decline', {
+      userId,
+      reference,
+    });
+    toast.success('Withdrawal declined');
+    return res.data.data;
+  } catch (err) {
+    handleError(err, 'Withdrawal decline failed');
+  }
+}, []);
 
   useEffect(() => {
     fetchWallet();
@@ -161,5 +187,7 @@ export default function useWallet() {
     getWalletDetailsByUserId,
     approveDeposit,
     approveWithdrawal,
+    declineDeposit,
+    declineWithdrawal
   };
 }

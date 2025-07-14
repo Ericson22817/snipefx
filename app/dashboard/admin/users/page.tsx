@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import useUsers, { User } from '@/hooks/useAdminUser'; // make sure path matches
+import useUsers, { User } from '@/hooks/useAdminUser'; // ensure this includes deductEarningsFromUser
 import { Dialog } from '@headlessui/react';
 import { toast } from 'react-toastify';
 
@@ -11,34 +11,44 @@ export default function UsersPage() {
     selectedUser,
     fetchAllUsers,
     addEarningsToUser,
+    deductEarningsFromUser,
     setSelectedUser,
   } = useUsers();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [isDeducting, setIsDeducting] = useState(false); // New
 
   useEffect(() => {
     fetchAllUsers();
   }, [fetchAllUsers]);
 
-  const handleOpenModal = (user: User) => {
-    setSelectedUser(user); // fix: directly set the selected user
+  const handleOpenModal = (user: User, deduct = false) => {
+    setSelectedUser(user);
+    setIsDeducting(deduct);
+    setAmount('');
     setIsModalOpen(true);
   };
 
-  const handleAddEarning = async () => {
+  const handleSubmit = async () => {
     if (!selectedUser || !amount) {
       toast.error("Please enter an amount.");
       return;
     }
 
     try {
-      await addEarningsToUser(selectedUser._id, Number(amount));
+      if (isDeducting) {
+        await deductEarningsFromUser(selectedUser._id, Number(amount));
+        toast.success('Earnings deducted successfully');
+      } else {
+        await addEarningsToUser(selectedUser._id, Number(amount));
+        toast.success('Earnings added successfully');
+      }
+
       setIsModalOpen(false);
-      setAmount('');
-      fetchAllUsers(); // Refresh list
+      fetchAllUsers();
     } catch {
-      // error toast handled in hook
+      // toast is handled in hook
     }
   };
 
@@ -52,7 +62,7 @@ export default function UsersPage() {
               <th className="p-2">Name</th>
               <th className="p-2">Email</th>
               <th className="p-2">Role</th>
-              <th className="p-2">Action</th>
+              <th className="p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -61,12 +71,18 @@ export default function UsersPage() {
                 <td className="p-2">{user.firstName} {user.lastName}</td>
                 <td className="p-2">{user.email}</td>
                 <td className="p-2">{user.role}</td>
-                <td className="p-2">
+                <td className="p-2 flex gap-2">
                   <button
-                    onClick={() => handleOpenModal(user)}
+                    onClick={() => handleOpenModal(user, false)}
                     className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
                   >
                     Add Earnings
+                  </button>
+                  <button
+                    onClick={() => handleOpenModal(user, true)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                  >
+                    Deduct Earnings
                   </button>
                 </td>
               </tr>
@@ -75,11 +91,12 @@ export default function UsersPage() {
         </table>
       </div>
 
+      {/* Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-screen px-4">
           <Dialog.Panel className="bg-[#1f1f1f] w-full max-w-md p-6 rounded shadow-lg text-white border border-gray-700">
             <Dialog.Title className="text-lg font-bold mb-4">
-              Add Earnings for {selectedUser?.firstName} {selectedUser?.lastName}
+              {isDeducting ? 'Deduct' : 'Add'} Earnings for {selectedUser?.firstName} {selectedUser?.lastName}
             </Dialog.Title>
 
             <input
@@ -98,11 +115,13 @@ export default function UsersPage() {
                 Cancel
               </button>
               <button
-                className="bg-purple-600 px-4 py-2 rounded hover:bg-purple-700"
-                onClick={handleAddEarning}
+                className={`px-4 py-2 rounded ${
+                  isDeducting ? 'bg-red-600 hover:bg-red-700' : 'bg-purple-600 hover:bg-purple-700'
+                }`}
+                onClick={handleSubmit}
                 disabled={!amount}
               >
-                Add
+                {isDeducting ? 'Deduct' : 'Add'}
               </button>
             </div>
           </Dialog.Panel>

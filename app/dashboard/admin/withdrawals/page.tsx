@@ -6,8 +6,9 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import usePendingWithdrawal from '@/hooks/usePendingWithdrawal';
 
-const AdminPage = () => {
-  const { approveWithdrawal } = useWallet();
+const AdminPage = () =>
+{
+  const { approveWithdrawal, declineWithdrawal } = useWallet();
   const { pendingDeposits, loading, error, refetch } = usePendingWithdrawal();
   const [approving, setApproving] = useState<string | null>(null);
 
@@ -21,20 +22,43 @@ const AdminPage = () => {
     currentPage * itemsPerPage
   );
 
-  const handleApprove = async (userId: string, reference: string) => {
+  const handleApprove = async (userId: string, reference: string) =>
+  {
     setApproving(reference);
-    try {
+    try
+    {
       await approveWithdrawal({ userId, reference });
       toast.success('Withdrawal approved');
       await refetch();
-    } catch {
+    } catch
+    {
       toast.error('Failed to approve withdrawal');
-    } finally {
+    } finally
+    {
       setApproving(null);
     }
   };
 
-  const handlePageChange = (page: number) => {
+  const handleDecline = async (userId: string, reference: string) =>
+  {
+    setApproving(reference);
+    try
+    {
+      await declineWithdrawal({ userId, reference });
+      toast.success('Withdrawal declined');
+      await refetch();
+    } catch
+    {
+      toast.error('Failed to decline withdrawal');
+    } finally
+    {
+      setApproving(null);
+    }
+  };
+
+
+  const handlePageChange = (page: number) =>
+  {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
@@ -74,7 +98,7 @@ const AdminPage = () => {
                     <td className="p-3 whitespace-nowrap">
                       {new Date(tx.createdAt).toLocaleString()}
                     </td>
-                    <td className="p-3">
+                    <td className="p-3 flex gap-2">
                       <button
                         onClick={() => handleApprove(tx.user._id, tx.reference)}
                         className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md flex items-center gap-1 disabled:opacity-50"
@@ -86,7 +110,20 @@ const AdminPage = () => {
                           </>
                         )}
                       </button>
+
+                      <button
+                        onClick={() => handleDecline(tx.user._id, tx.reference)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center gap-1 disabled:opacity-50"
+                        disabled={approving === tx.reference}
+                      >
+                        {approving === tx.reference ? 'Declining...' : (
+                          <>
+                            ❌ Decline
+                          </>
+                        )}
+                      </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
@@ -107,11 +144,10 @@ const AdminPage = () => {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === i + 1
+                className={`px-3 py-1 rounded ${currentPage === i + 1
                     ? 'bg-purple-600 text-white'
                     : 'bg-gray-700 hover:bg-gray-600'
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>

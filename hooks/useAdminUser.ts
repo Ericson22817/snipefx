@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -31,7 +32,6 @@ export default function useUsers() {
     try {
       const res = await apiService.get<ApiResponse<User[]>>('/wallet/users');
       setUsers(res.data.data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to fetch users');
     }
@@ -42,7 +42,6 @@ export default function useUsers() {
     try {
       const res = await apiService.get<ApiResponse<User>>(`/wallet/users/${userId}`);
       setSelectedUser(res.data.data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to fetch user');
     } finally {
@@ -58,9 +57,22 @@ export default function useUsers() {
       );
       toast.success('Earnings added successfully');
       return res.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to add earnings');
+      throw err;
+    }
+  }, []);
+
+  const deductEarningsFromUser = useCallback(async (userId: string, amount: number) => {
+    try {
+      const res = await apiService.post<ApiResponse<{ userId: string; amount: number }>>(
+        `/wallet/earnings/${userId}`,
+        { amount }
+      );
+      toast.success('Earnings deducted successfully');
+      return res.data;
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to deduct earnings');
       throw err;
     }
   }, []);
@@ -72,6 +84,7 @@ export default function useUsers() {
     fetchAllUsers,
     fetchUserById,
     addEarningsToUser,
+    deductEarningsFromUser,
     setSelectedUser,
   };
 }

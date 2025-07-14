@@ -6,10 +6,13 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import usePendingDeposits from '@/hooks/usePendingDeposits';
 
-const AdminPage = () => {
-  const { approveDeposit } = useWallet();
+const AdminPage = () =>
+{
+  const { approveDeposit, declineDeposit } = useWallet();
   const { pendingDeposits, loading, error, refetch } = usePendingDeposits();
   const [approving, setApproving] = useState<string | null>(null);
+  const [declining, setDeclining] = useState<string | null>(null);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -20,22 +23,44 @@ const AdminPage = () => {
     currentPage * itemsPerPage
   );
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page: number) =>
+  {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
-  const handleApprove = async (userId: string, reference: string) => {
+  const handleApprove = async (userId: string, reference: string) =>
+  {
     setApproving(reference);
-    try {
+    try
+    {
       await approveDeposit({ userId, reference });
       toast.success('Deposit approved');
       await refetch();
-    } catch {
+    } catch
+    {
       toast.error('Failed to approve deposit');
-    } finally {
+    } finally
+    {
       setApproving(null);
     }
   };
+  const handleDecline = async (userId: string, reference: string) =>
+  {
+    setDeclining(reference);
+    try
+    {
+      await declineDeposit({ userId, reference });
+      toast.success('Deposit declined');
+      await refetch();
+    } catch
+    {
+      toast.error('Failed to decline deposit');
+    } finally
+    {
+      setDeclining(null);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-4">
@@ -69,7 +94,7 @@ const AdminPage = () => {
                     <td className="p-3 whitespace-nowrap">${tx.amount.toFixed(2)}</td>
                     <td className="p-3 whitespace-nowrap">{tx.reference}</td>
                     <td className="p-3 whitespace-nowrap">{new Date(tx.createdAt).toLocaleString()}</td>
-                    <td className="p-3">
+                    <td className="p-3 space-x-2">
                       <button
                         onClick={() => handleApprove(tx.user._id, tx.reference)}
                         className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md flex items-center gap-1 disabled:opacity-50"
@@ -81,7 +106,20 @@ const AdminPage = () => {
                           </>
                         )}
                       </button>
+
+                      <button
+                        onClick={() => handleDecline(tx.user._id, tx.reference)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center gap-1 disabled:opacity-50"
+                        disabled={declining === tx.reference}
+                      >
+                        {declining === tx.reference ? 'Declining...' : (
+                          <>
+                            ❌ Decline
+                          </>
+                        )}
+                      </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
@@ -102,11 +140,10 @@ const AdminPage = () => {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === i + 1
+                className={`px-3 py-1 rounded ${currentPage === i + 1
                     ? 'bg-purple-600 text-white'
                     : 'bg-gray-700 hover:bg-gray-600'
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
